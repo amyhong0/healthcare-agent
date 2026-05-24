@@ -2,6 +2,7 @@ import os
 import yaml
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse, FileResponse
 from pydantic import BaseModel
 from typing import List, Optional
 import time
@@ -16,6 +17,21 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Route to serve frontend HTML directly from root
+@app.get("/")
+@app.get("/index.html")
+def read_root():
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    paths_to_try = [
+        os.path.join(current_dir, "..", "public", "index.html"),
+        os.path.join(current_dir, "public", "index.html"),
+        os.path.join(os.getcwd(), "public", "index.html"),
+    ]
+    for path in paths_to_try:
+        if os.path.exists(path):
+            return FileResponse(path)
+    return HTMLResponse("<h1>대웅 웰다 프론트엔드를 찾을 수 없습니다.</h1>", status_code=404)
 
 class Message(BaseModel):
     role: str
