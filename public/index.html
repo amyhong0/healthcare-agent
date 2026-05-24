@@ -236,8 +236,21 @@
                     <div class="bubble">${message}</div>
                 </div>
             `;
-            
-            const payload = { message: message, history: chatHistory };
+
+            // 간단한 라우팅: 메시지 내용에 따라 적절한 agent_id 선택
+            let agentId = 'welda_coach';
+            const m = message.toLowerCase();
+            if (m.includes('영양제') || m.includes('오메가') || m.includes('유산균') || m.includes('비타민')) {
+                agentId = 'supplement_expert';
+            } else if (m.includes('라면') || m.includes('짜장') || m.includes('삼겹') || m.includes('샐러드') || m.includes('밥') || m.includes('면') ) {
+                agentId = 'diet_expert';
+            }
+
+            // Build messages payload from local chatHistory + current user message
+            const messagesPayload = chatHistory.map(m => ({ role: m.role, content: m.content }));
+            messagesPayload.push({ role: 'user', content: message });
+
+            const payload = { agent_id: agentId, messages: messagesPayload };
             input.value = '';
             chatBox.scrollTop = chatBox.scrollHeight;
 
@@ -262,27 +275,29 @@
                 const data = await response.json();
 
                 // 로딩 제거
-                document.getElementById(loadingId).remove();
+                const el = document.getElementById(loadingId);
+                if (el) el.remove();
 
                 // 3. 내부 멀티에이전트 로그 결합 및 결과 출력
                 chatBox.innerHTML += `
                     <div class="message-row bot">
                         <div class="agent-log">
                             <div class="agent-log-title"><i class="fa-solid fa-microchip"></i> Agent 1: 영양 분석 인프라 로그</div>
-                            ${data.analysis_log}
+                            ${data.analysis_log || ''}
                         </div>
                         <div class="bubble" style="margin-top: 6px;">
-                            ${data.answer}
+                            ${data.answer || data.content || '응답이 없습니다.'}
                         </div>
                     </div>
                 `;
-                
+
                 // 4. 컨텍스트 유지를 위한 내부 메모리 적재
                 chatHistory.push({ role: "user", content: message });
-                chatHistory.push({ role: "assistant", content: data.answer });
-                
+                chatHistory.push({ role: "assistant", content: data.answer || data.content || '' });
+
             } catch (error) {
-                document.getElementById(loadingId).remove();
+                const el = document.getElementById(loadingId);
+                if (el) el.remove();
                 chatBox.innerHTML += `
                     <div class="message-row bot">
                         <div class="bubble" style="background:#FEF2F2; color:#991B1B; border-color:#FCA5A5;">
@@ -291,7 +306,7 @@
                     </div>
                 `;
             }
-            
+
             chatBox.scrollTop = chatBox.scrollHeight;
         }
     </script>
