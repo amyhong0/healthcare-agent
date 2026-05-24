@@ -1,8 +1,16 @@
 {
   "version": 2,
+  "functions": {
+    "api/index.py": {
+      "includeFiles": [
+        "public/**",
+        "config/**"
+      ]
+    }
+  },
   "rewrites": [
     {
-      "source": "/api/(.*)",
+      "source": "/(.*)",
       "destination": "/api/index.py"
     }
   ]
