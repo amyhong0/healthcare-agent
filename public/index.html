@@ -1,1045 +1,299 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>대웅 웰다 (Welda) - 프리미엄 AI 웰니스 코치</title>
-  
-  <!-- Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
-  
-  <!-- FontAwesome for icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-  <style>
-    :root {
-      --bg-dark: #0a0e17;
-      --panel-bg: rgba(16, 22, 37, 0.65);
-      --glass-border: rgba(255, 255, 255, 0.08);
-      --glass-highlight: rgba(255, 255, 255, 0.03);
-      --text-main: #f3f4f6;
-      --text-muted: #9ca3af;
-      --primary-gradient: linear-gradient(135deg, #818cf8, #4f46e5);
-      --primary-color: #4f46e5;
-      --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Outfit', 'Noto Sans KR', sans-serif;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    body {
-      background-color: var(--bg-dark);
-      color: var(--text-main);
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      overflow: hidden;
-      position: relative;
-    }
-
-    /* Animated background glow */
-    .bg-glow-1 {
-      position: absolute;
-      top: -10%;
-      left: -10%;
-      width: 50vw;
-      height: 50vw;
-      background: radial-gradient(circle, rgba(79, 70, 229, 0.15) 0%, rgba(0, 0, 0, 0) 70%);
-      filter: blur(80px);
-      z-index: 0;
-      animation: drift 20s infinite alternate;
-    }
-
-    .bg-glow-2 {
-      position: absolute;
-      bottom: -10%;
-      right: -10%;
-      width: 50vw;
-      height: 50vw;
-      background: radial-gradient(circle, rgba(16, 185, 129, 0.12) 0%, rgba(0, 0, 0, 0) 70%);
-      filter: blur(80px);
-      z-index: 0;
-      animation: drift 25s infinite alternate-reverse;
-    }
-
-    @keyframes drift {
-      0% { transform: translate(0, 0) scale(1); }
-      100% { transform: translate(5%, 5%) scale(1.1); }
-    }
-
-    /* Container layout */
-    .app-container {
-      width: 95vw;
-      height: 90vh;
-      max-width: 1400px;
-      max-height: 850px;
-      background: var(--panel-bg);
-      border: 1px solid var(--glass-border);
-      border-radius: 24px;
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      z-index: 1;
-      display: grid;
-      grid-template-columns: 320px 1fr;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-      overflow: hidden;
-      animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    @keyframes fadeUp {
-      from {
-        opacity: 0;
-        transform: translateY(30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    /* Sidebar Styling */
-    .sidebar {
-      border-right: 1px solid var(--glass-border);
-      display: flex;
-      flex-direction: column;
-      background: rgba(8, 12, 21, 0.4);
-    }
-
-    .sidebar-header {
-      padding: 24px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      border-bottom: 1px solid var(--glass-border);
-    }
-
-    .logo-container {
-      width: 40px;
-      height: 40px;
-      border-radius: 12px;
-      background: linear-gradient(135deg, #10b981, #3b82f6);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      color: white;
-      font-size: 1.25rem;
-      font-weight: bold;
-      box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
-    }
-
-    .logo-text {
-      font-weight: 700;
-      font-size: 1.15rem;
-      letter-spacing: -0.5px;
-      background: linear-gradient(to right, #ffffff, #9ca3af);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .logo-sub {
-      font-size: 0.75rem;
-      color: #10b981;
-      font-weight: 600;
-      margin-top: 2px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    .sidebar-section {
-      padding: 20px 16px;
-      flex: 1;
-      overflow-y: auto;
-    }
-
-    .section-title {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 12px;
-      padding-left: 8px;
-    }
-
-    .agent-list {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .agent-card {
-      padding: 14px 16px;
-      border-radius: 16px;
-      background: transparent;
-      border: 1px solid transparent;
-      cursor: pointer;
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      transition: var(--transition-smooth);
-    }
-
-    .agent-card:hover {
-      background: rgba(255, 255, 255, 0.03);
-      border-color: rgba(255, 255, 255, 0.05);
-      transform: translateX(4px);
-    }
-
-    .agent-card.active {
-      background: rgba(255, 255, 255, 0.06);
-      border-color: var(--glass-border);
-      box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
-    }
-
-    .agent-avatar {
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 1.1rem;
-      flex-shrink: 0;
-      position: relative;
-    }
-
-    .agent-avatar::after {
-      content: '';
-      position: absolute;
-      bottom: 1px;
-      right: 1px;
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background-color: #10b981;
-      border: 2px solid #0a0e17;
-    }
-
-    .agent-info {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .agent-name {
-      font-weight: 600;
-      font-size: 0.95rem;
-      color: var(--text-main);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .agent-role {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      margin-top: 2px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .agent-desc {
-      font-size: 0.75rem;
-      color: #6b7280;
-      margin-top: 6px;
-      line-height: 1.3;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-
-    /* Sidebar Footer widgets */
-    .sidebar-widgets {
-      padding: 16px;
-      border-top: 1px solid var(--glass-border);
-      background: rgba(5, 8, 15, 0.3);
-    }
-
-    .health-widget {
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid rgba(255, 255, 255, 0.04);
-      padding: 12px;
-      border-radius: 12px;
-      margin-bottom: 8px;
-    }
-
-    .widget-title {
-      font-size: 0.7rem;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 6px;
-    }
-
-    .widget-val {
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: var(--text-main);
-    }
-
-    .widget-progress {
-      height: 4px;
-      background: rgba(255, 255, 255, 0.08);
-      border-radius: 2px;
-      margin-top: 8px;
-      overflow: hidden;
-    }
-
-    .widget-bar {
-      height: 100%;
-      border-radius: 2px;
-    }
-
-    /* Chat Area Styling */
-    .chat-area {
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-      background: rgba(10, 14, 23, 0.3);
-      position: relative;
-    }
-
-    /* Chat Header */
-    .chat-header {
-      padding: 18px 24px;
-      border-bottom: 1px solid var(--glass-border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      backdrop-filter: blur(10px);
-      background: rgba(10, 14, 23, 0.5);
-    }
-
-    .active-agent-profile {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-
-    .active-agent-avatar {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 1.2rem;
-      font-weight: bold;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    }
-
-    .active-agent-details h3 {
-      font-size: 1.05rem;
-      font-weight: 700;
-    }
-
-    .active-agent-details p {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      margin-top: 2px;
-    }
-
-    .header-actions {
-      display: flex;
-      gap: 8px;
-    }
-
-    .header-btn {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      color: var(--text-main);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: var(--transition-smooth);
-    }
-
-    .header-btn:hover {
-      background: rgba(255, 255, 255, 0.08);
-      color: white;
-    }
-
-    /* Chat Messages Log */
-    .chat-messages {
-      flex: 1;
-      padding: 24px;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
-      scroll-behavior: smooth;
-    }
-
-    .chat-messages::-webkit-scrollbar {
-      width: 6px;
-    }
-
-    .chat-messages::-webkit-scrollbar-track {
-      background: transparent;
-    }
-
-    .chat-messages::-webkit-scrollbar-thumb {
-      background: rgba(255, 255, 255, 0.08);
-      border-radius: 3px;
-    }
-
-    .chat-messages::-webkit-scrollbar-thumb:hover {
-      background: rgba(255, 255, 255, 0.15);
-    }
-
-    .message-row {
-      display: flex;
-      width: 100%;
-    }
-
-    .message-row.user {
-      justify-content: flex-end;
-    }
-
-    .message-row.assistant {
-      justify-content: flex-start;
-    }
-
-    .message-bubble {
-      max-width: 70%;
-      padding: 14px 18px;
-      border-radius: 20px;
-      font-size: 0.92rem;
-      line-height: 1.5;
-      position: relative;
-      animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
-
-    @keyframes popIn {
-      from {
-        opacity: 0;
-        transform: scale(0.9) translateY(10px);
-      }
-      to {
-        opacity: 1;
-        transform: scale(1) translateY(0);
-      }
-    }
-
-    .message-row.user .message-bubble {
-      background: var(--active-gradient, var(--primary-gradient));
-      color: white;
-      border-bottom-right-radius: 4px;
-      box-shadow: 0 4px 15px rgba(79, 70, 229, 0.15);
-    }
-
-    .message-row.assistant .message-bubble {
-      background: rgba(255, 255, 255, 0.04);
-      color: var(--text-main);
-      border: 1px solid var(--glass-border);
-      border-bottom-left-radius: 4px;
-    }
-
-    .message-time {
-      font-size: 0.7rem;
-      color: var(--text-muted);
-      margin-top: 6px;
-      display: block;
-      text-align: right;
-    }
-
-    /* Typing Indicator */
-    .typing-indicator {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      padding: 4px 8px;
-    }
-
-    .typing-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: var(--text-muted);
-      animation: bounce 1.4s infinite ease-in-out both;
-    }
-
-    .typing-dot:nth-child(1) { animation-delay: -0.32s; }
-    .typing-dot:nth-child(2) { animation-delay: -0.16s; }
-
-    @keyframes bounce {
-      0%, 80%, 100% { transform: scale(0); }
-      40% { transform: scale(1); }
-    }
-
-    /* Input Area */
-    .chat-input-area {
-      padding: 20px 24px;
-      border-top: 1px solid var(--glass-border);
-      background: rgba(8, 12, 21, 0.5);
-    }
-
-    .input-wrapper {
-      display: flex;
-      align-items: center;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid var(--glass-border);
-      border-radius: 16px;
-      padding: 6px 10px 6px 18px;
-      transition: var(--transition-smooth);
-    }
-
-    .input-wrapper:focus-within {
-      background: rgba(255, 255, 255, 0.05);
-      border-color: rgba(99, 102, 241, 0.4);
-      box-shadow: 0 0 15px rgba(99, 102, 241, 0.1);
-    }
-
-    .chat-input {
-      flex: 1;
-      background: transparent;
-      border: none;
-      color: var(--text-main);
-      font-size: 0.95rem;
-      outline: none;
-      padding: 10px 0;
-      resize: none;
-      height: 42px;
-      max-height: 120px;
-    }
-
-    .chat-input::placeholder {
-      color: var(--text-muted);
-    }
-
-    .input-actions {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .input-action-btn {
-      background: transparent;
-      border: none;
-      color: var(--text-muted);
-      font-size: 1.1rem;
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: var(--transition-smooth);
-    }
-
-    .input-action-btn:hover {
-      background: rgba(255, 255, 255, 0.04);
-      color: var(--text-main);
-    }
-
-    .send-btn {
-      background: var(--active-gradient, var(--primary-gradient));
-      color: white;
-      border: none;
-      border-radius: 12px;
-      padding: 10px 16px;
-      font-weight: 600;
-      font-size: 0.88rem;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      transition: var(--transition-smooth);
-      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
-    }
-
-    .send-btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 6px 16px rgba(79, 70, 229, 0.3);
-    }
-
-    .send-btn:active {
-      transform: translateY(0);
-    }
-
-    /* Mobile Responsive styling */
-    @media (max-width: 900px) {
-      .app-container {
-        grid-template-columns: 1fr;
-        height: 100vh;
-        width: 100vw;
-        border-radius: 0;
-        max-height: 100vh;
-        border: none;
-      }
-
-      .sidebar {
-        display: none; /* Hide sidebar by default on mobile, can toggle or use bottom nav */
-      }
-
-      /* Simple mobile menu trigger top bar */
-      .mobile-agent-selector {
-        display: flex !important;
-      }
-    }
-
-    .mobile-agent-selector {
-      display: none;
-      background: rgba(8, 12, 21, 0.8);
-      border-bottom: 1px solid var(--glass-border);
-      padding: 10px;
-      overflow-x: auto;
-      gap: 8px;
-      white-space: nowrap;
-    }
-
-    .mobile-agent-tab {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 14px;
-      border-radius: 20px;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      color: var(--text-muted);
-      font-size: 0.8rem;
-      cursor: pointer;
-    }
-
-    .mobile-agent-tab.active {
-      background: rgba(255, 255, 255, 0.08);
-      border-color: var(--glass-border);
-      color: white;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welda - 내 손안의 혈당 다이어트 코치</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --welda-primary: #10B981; /* 웰다 시그니처 헬시 그린 */
+            --welda-dark-green: #065F46; /* 깊은 그린 (타이틀용) */
+            --welda-bg: #FAFAF9; /* 따뜻하고 부드러운 스톤 화이트 배경 */
+            --welda-accent: #F59E0B; /* 혈당 스파이크 경고/포인트 오렌지 */
+            --chat-user: #ECFDF5; /* 유저 말풍선 (연한 민트 그린) */
+            --chat-bot: #FFFFFF; /* 코치 말풍선 (순백색) */
+            --text-main: #1F2937; /* 다크 그레이 문장 컬러 */
+            --text-muted: #6B7280; /* 연한 그레이 로그 컬러 */
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; 
+            background-color: var(--welda-bg); 
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* 스마트폰 앱 뷰포트 레이아웃 */
+        .app-container {
+            width: 100%;
+            max-width: 450px;
+            height: 92vh;
+            background: #FFFFFF;
+            border-radius: 24px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.06);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid #E5E7EB;
+        }
+
+        /* 상단 헤더 영역 */
+        .app-header {
+            background: #FFFFFF;
+            padding: 20px;
+            border-bottom: 1px solid #F3F4F6;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .app-header .avatar {
+            width: 42px;
+            height: 42px;
+            background: var(--welda-primary);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #FFFFFF;
+            font-size: 20px;
+        }
+        .app-header .title-area h1 {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--welda-dark-green);
+        }
+        .app-header .title-area p {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* 테크 리드 검증용 배너 */
+        .tech-badge {
+            background: #EFF6FF;
+            color: #1D4ED8;
+            padding: 6px 12px;
+            font-size: 11px;
+            font-weight: 600;
+            text-align: center;
+            border-bottom: 1px solid #DBEAFE;
+        }
+
+        /* 채팅 스크롤 영역 */
+        .chat-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: var(--welda-bg);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        /* 대화 말풍선 공통 스타일 */
+        .message-row { display: flex; flex-direction: column; width: 100%; }
+        .message-row.user { align-items: flex-end; }
+        .message-row.bot { align-items: flex-start; }
+
+        .bubble {
+            max-width: 85%;
+            padding: 14px 16px;
+            font-size: 14px;
+            line-height: 1.5;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        }
+        .user .bubble {
+            background-color: var(--chat-user);
+            color: var(--welda-dark-green);
+            border-radius: 18px 18px 2px 18px;
+            font-weight: 500;
+        }
+        .bot .bubble {
+            background-color: var(--chat-bot);
+            color: var(--text-main);
+            border-radius: 18px 18px 18px 2px;
+            border: 1px solid #E5E7EB;
+        }
+
+        /* 에이전트 연동 로그 타임라인 구조 (면접관 가독성 핵심) */
+        .agent-log {
+            width: 100%;
+            background: #F3F4F6;
+            border-left: 3px solid var(--welda-accent);
+            padding: 10px 14px;
+            border-radius: 0 8px 8px 0;
+            font-size: 12px;
+            color: #4B5563;
+            margin: 4px 0;
+        }
+        .agent-log-title {
+            font-weight: 700;
+            color: var(--welda-accent);
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* 하단 입력 창 */
+        .app-footer {
+            padding: 16px;
+            background: #FFFFFF;
+            border-top: 1px solid #F3F4F6;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .input-wrapper {
+            flex: 1;
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .app-input {
+            width: 100%;
+            padding: 14px 18px;
+            border-radius: 30px;
+            border: 1px solid #E5E7EB;
+            font-size: 14px;
+            background: #F9FAFB;
+            outline: none;
+            transition: all 0.2s;
+        }
+        .app-input:focus {
+            border-color: var(--welda-primary);
+            background: #FFFFFF;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+        .send-btn {
+            width: 46px;
+            height: 46px;
+            background: var(--welda-primary);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background 0.2s;
+        }
+        .send-btn:hover { background: var(--welda-dark-green); }
+        
+        /* 스크롤바 커스텀 */
+        .chat-content::-webkit-scrollbar { width: 6px; }
+        .chat-content::-webkit-scrollbar-thumb { background: #E5E7EB; border-radius: 3px; }
+    </style>
 </head>
 <body>
 
-  <div class="bg-glow-1"></div>
-  <div class="bg-glow-2"></div>
-
-  <div class="app-container">
-    
-    <!-- Sidebar -->
-    <aside class="sidebar">
-      <div class="sidebar-header">
-        <div class="logo-container">
-          <i class="fa-solid fa-heart-pulse"></i>
-        </div>
-        <div>
-          <div class="logo-text">대웅 웰다</div>
-          <div class="logo-sub">Wellness Coach</div>
-        </div>
-      </div>
-      
-      <div class="sidebar-section">
-        <div class="section-title">스페셜 에이전트</div>
-        <div class="agent-list" id="agent-list-container">
-          <!-- Loaded dynamically -->
-          <div style="text-align: center; color: var(--text-muted); padding: 20px; font-size: 0.85rem;">
-            에이전트를 로딩 중입니다...
-          </div>
-        </div>
-      </div>
-      
-      <!-- Stats widgets to boost aesthetics -->
-      <div class="sidebar-widgets">
-        <div class="health-widget">
-          <div class="widget-title">
-            <span>오늘의 걸음 수</span>
-            <i class="fa-solid fa-shoe-prints" style="color: #3b82f6;"></i>
-          </div>
-          <div class="widget-val">6,840보</div>
-          <div class="widget-progress">
-            <div class="widget-bar" style="width: 68%; background: linear-gradient(to right, #60a5fa, #3b82f6);"></div>
-          </div>
-        </div>
-        <div class="health-widget">
-          <div class="widget-title">
-            <span>혈당 케어 레벨</span>
-            <i class="fa-solid fa-chart-line" style="color: #10b981;"></i>
-          </div>
-          <div class="widget-val">98 mg/dL (안정)</div>
-          <div class="widget-progress">
-            <div class="widget-bar" style="width: 85%; background: linear-gradient(to right, #34d399, #10b981);"></div>
-          </div>
-        </div>
-      </div>
-    </aside>
-
-    <!-- Main Chat Area -->
-    <main class="chat-area">
-      <!-- Mobile Agent Selector tabs -->
-      <div class="mobile-agent-selector" id="mobile-tabs-container"></div>
-      
-      <!-- Chat Header -->
-      <header class="chat-header">
-        <div class="active-agent-profile">
-          <div class="active-agent-avatar" id="header-avatar">W</div>
-          <div class="active-agent-details">
-            <h3 id="header-name">로딩 중</h3>
-            <p id="header-role">Wellness Assistant</p>
-          </div>
-        </div>
-        <div class="header-actions">
-          <button class="header-btn" title="대화 초기화" id="clear-chat-btn">
-            <i class="fa-solid fa-rotate-left"></i>
-          </button>
-          <button class="header-btn" title="정보" id="info-btn">
-            <i class="fa-solid fa-circle-info"></i>
-          </button>
-        </div>
-      </header>
-      
-      <!-- Chat Messages Log -->
-      <div class="chat-messages" id="chat-messages-container">
-        <!-- Messages loaded dynamically -->
-      </div>
-      
-      <!-- Chat Input -->
-      <div class="chat-input-area">
-        <div class="input-wrapper">
-          <input type="text" class="chat-input" id="message-input" placeholder="웰니스 코치에게 질문해보세요..." autocomplete="off">
-          <div class="input-actions">
-            <button class="input-action-btn" title="사진 업로드 (준비중)">
-              <i class="fa-regular fa-image"></i>
-            </button>
-            <button class="send-btn" id="send-btn">
-              <span>전송</span>
-              <i class="fa-solid fa-paper-plane"></i>
-            </button>
-          </div>
-        </div>
-      </div>
-    </main>
-
-  </div>
-
-  <script>
-    // App State
-    let agents = [];
-    let activeAgentId = null;
-    let chatHistories = {}; // Map of agent_id -> list of messages
-
-    // DOM Elements
-    const agentListContainer = document.getElementById('agent-list-container');
-    const mobileTabsContainer = document.getElementById('mobile-tabs-container');
-    const headerAvatar = document.getElementById('header-avatar');
-    const headerName = document.getElementById('header-name');
-    const headerRole = document.getElementById('header-role');
-    const chatMessagesContainer = document.getElementById('chat-messages-container');
-    const messageInput = document.getElementById('message-input');
-    const sendBtn = document.getElementById('send-btn');
-    const clearChatBtn = document.getElementById('clear-chat-btn');
-    const infoBtn = document.getElementById('info-btn');
-
-    // Init App
-    async function init() {
-      await fetchAgents();
-      setupEventListeners();
-    }
-
-    // Fetch Agents from FastAPI API
-    async function fetchAgents() {
-      try {
-        const response = await fetch('/api/agents');
-        if (!response.ok) throw new Error('API request failed');
-        agents = await response.json();
-        
-        renderAgentSelectors();
-        
-        // Select first agent by default
-        if (agents.length > 0) {
-          selectAgent(agents[0].id);
-        }
-      } catch (error) {
-        console.error('Error fetching agents:', error);
-        // Fallback static configuration if API fails (e.g., direct html file opening)
-        agents = [
-          {
-            id: "welda_coach",
-            name: "웰다 케어 코치",
-            role: "Wellness & Health Coach",
-            description: "대웅 웰다의 메인 건강 코칭 에이전트입니다. 식단, 운동, 영양제 등 개인화된 웰니스 가이드를 제공합니다.",
-            welcome_message: "안녕하세요! 당신의 개인 맞춤 웰니스 코치, 웰다입니다. 오늘 하루는 어떻게 보내셨나요? 무엇이든 편하게 물어보세요!",
-            color: "#4F46E5",
-            gradient: "linear-gradient(135deg, #818CF8, #4F46E5)"
-          },
-          {
-            id: "diet_expert",
-            name: "영양분석 마스터",
-            role: "Dietary & Nutrition Specialist",
-            description: "식단 정보를 기반으로 칼로리, 탄단지 및 미량 영양소 구성을 분석하고 혈당 스파이크를 줄이는 대안 식단을 제안합니다.",
-            welcome_message: "오늘 드신 식사 메뉴를 적어주시면 영양 성분 분석과 함께 더 건강한 식습관 팁을 드릴게요!",
-            color: "#10B981",
-            gradient: "linear-gradient(135deg, #34D399, #059669)"
-          },
-          {
-            id: "supplement_expert",
-            name: "영양제 큐레이터",
-            role: "Supplement Specialist",
-            description: "현재 드시는 영양제들의 과다 복용, 부작용 및 상호작용을 분석하고 상태에 맞는 영양제 매칭 서비스를 제공합니다.",
-            welcome_message: "현재 복용 중인 영양제 목록이나 개선하고 싶은 건강 고민을 말씀해주세요. 최적의 조합을 추천해 드립니다!",
-            color: "#F59E0B",
-            gradient: "linear-gradient(135deg, #FBBF24, #D97706)"
-          }
-        ];
-        renderAgentSelectors();
-        selectAgent(agents[0].id);
-      }
-    }
-
-    // Render Agent lists for sidebar and mobile tabs
-    function renderAgentSelectors() {
-      agentListContainer.innerHTML = '';
-      mobileTabsContainer.innerHTML = '';
-      
-      agents.forEach(agent => {
-        // Avatar icon based on ID
-        let iconClass = 'fa-user-doctor';
-        if (agent.id === 'welda_coach') iconClass = 'fa-heart-pulse';
-        if (agent.id === 'diet_expert') iconClass = 'fa-apple-whole';
-        if (agent.id === 'supplement_expert') iconClass = 'fa-capsules';
-
-        // Sidebar Card
-        const card = document.createElement('div');
-        card.className = `agent-card ${agent.id === activeAgentId ? 'active' : ''}`;
-        card.id = `sidebar-agent-${agent.id}`;
-        card.innerHTML = `
-          <div class="agent-avatar" style="background: ${agent.gradient || agent.color}">
-            <i class="fa-solid ${iconClass}"></i>
-          </div>
-          <div class="agent-info">
-            <div class="agent-name">
-              <span>${agent.name}</span>
+    <div class="app-container">
+        <div class="app-header">
+            <div class="avatar"><i class="fa-solid fa-heart-pulse"></i></div>
+            <div class="title-area">
+                <h1>Welda 개인화 다이어트 코치</h1>
+                <p>Multi-Agent 기반 맞춤형 혈당 관리</p>
             </div>
-            <div class="agent-role">${agent.role}</div>
-            <div class="agent-desc">${agent.description}</div>
-          </div>
-        `;
-        card.addEventListener('click', () => selectAgent(agent.id));
-        agentListContainer.appendChild(card);
-
-        // Mobile Tab
-        const tab = document.createElement('div');
-        tab.className = `mobile-agent-tab ${agent.id === activeAgentId ? 'active' : ''}`;
-        tab.id = `mobile-agent-${agent.id}`;
-        tab.innerHTML = `
-          <i class="fa-solid ${iconClass}"></i>
-          <span>${agent.name}</span>
-        `;
-        tab.addEventListener('click', () => selectAgent(agent.id));
-        mobileTabsContainer.appendChild(tab);
-      });
-    }
-
-    // Select Agent and swap chat view
-    function selectAgent(agentId) {
-      activeAgentId = agentId;
-      const agent = agents.find(a => a.id === agentId);
-      if (!agent) return;
-
-      // Update active states in UI
-      agents.forEach(a => {
-        const sidebarCard = document.getElementById(`sidebar-agent-${a.id}`);
-        const mobileTab = document.getElementById(`mobile-agent-${a.id}`);
-        if (sidebarCard) sidebarCard.classList.toggle('active', a.id === agentId);
-        if (mobileTab) mobileTab.classList.toggle('active', a.id === agentId);
-      });
-
-      // Update colors & gradients dynamic property
-      document.documentElement.style.setProperty('--active-gradient', agent.gradient || agent.color);
-      document.documentElement.style.setProperty('--primary-color', agent.color);
-
-      // Update Header
-      headerName.textContent = agent.name;
-      headerRole.textContent = agent.role;
-      
-      let iconClass = 'fa-user-doctor';
-      if (agent.id === 'welda_coach') iconClass = 'fa-heart-pulse';
-      if (agent.id === 'diet_expert') iconClass = 'fa-apple-whole';
-      if (agent.id === 'supplement_expert') iconClass = 'fa-capsules';
-      
-      headerAvatar.innerHTML = `<i class="fa-solid ${iconClass}"></i>`;
-      headerAvatar.style.background = agent.gradient || agent.color;
-
-      // Load or Create Chat History
-      if (!chatHistories[agentId]) {
-        chatHistories[agentId] = [
-          { role: 'assistant', content: agent.welcome_message || '안녕하세요! 어떻게 도움을 드릴까요?' }
-        ];
-      }
-
-      renderMessages();
-    }
-
-    // Render messages of active agent
-    function renderMessages() {
-      chatMessagesContainer.innerHTML = '';
-      const history = chatHistories[activeAgentId] || [];
-      
-      history.forEach(msg => {
-        appendMessageUI(msg.role, msg.content);
-      });
-      scrollToBottom();
-    }
-
-    // Append a message to the UI
-    function appendMessageUI(role, content) {
-      const row = document.createElement('div');
-      row.className = `message-row ${role}`;
-      
-      const bubble = document.createElement('div');
-      bubble.className = 'message-bubble';
-      
-      // Parse basic bullet points and newlines to HTML
-      let formattedContent = content
-        .replace(/\n/g, '<br>')
-        .replace(/- (.*?)(<br>|$)/g, '• $1$2')
-        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-        
-      bubble.innerHTML = formattedContent;
-      
-      row.appendChild(bubble);
-      chatMessagesContainer.appendChild(row);
-    }
-
-    // Append Typing Indicator
-    function showTypingIndicator() {
-      const row = document.createElement('div');
-      row.className = 'message-row assistant typing-row';
-      
-      const bubble = document.createElement('div');
-      bubble.className = 'message-bubble';
-      bubble.innerHTML = `
-        <div class="typing-indicator">
-          <div class="typing-dot"></div>
-          <div class="typing-dot"></div>
-          <div class="typing-dot"></div>
         </div>
-      `;
-      
-      row.appendChild(bubble);
-      chatMessagesContainer.appendChild(row);
-      scrollToBottom();
-    }
 
-    // Remove Typing Indicator
-    function removeTypingIndicator() {
-      const typingRow = chatMessagesContainer.querySelector('.typing-row');
-      if (typingRow) {
-        typingRow.remove();
-      }
-    }
+        <div class="tech-badge">
+            <i class="fa-solid fa-gears"></i> YAML 선언적 프롬프트 & Context Chaining 파이프라인 작동 중
+        </div>
 
-    // Scroll to bottom of chat
-    function scrollToBottom() {
-      chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
-    }
+        <div class="chat-content" id="chat-box">
+            <div class="message-row bot">
+                <div class="bubble">
+                    안녕하세요! 대웅제약 웰다 다이어트 코치입니다. 🍏오늘 드신 식단을 자유롭게 입력해 주시면 혈당 예측 분석과 함께 개인화 가이드를 드릴게요!
+                </div>
+            </div>
+        </div>
 
-    // Send Message handler
-    async function sendMessage() {
-      const text = messageInput.value.trim();
-      if (!text) return;
+        <div class="app-footer">
+            <div class="input-wrapper">
+                <input type="text" id="input-box" class="app-input" placeholder="오늘 식단을 기록해보세요 (예: 짜장면과 탕수육)" onkeypress="if(event.keyCode==13) sendMessage()">
+            </div>
+            <button class="send-btn" onclick="sendMessage()"><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
+    </div>
 
-      // Clear input
-      messageInput.value = '';
+    <script>
+        let chatHistory = [];
 
-      // Add to state and UI
-      const userMessage = { role: 'user', content: text };
-      chatHistories[activeAgentId].push(userMessage);
-      appendMessageUI('user', text);
-      scrollToBottom();
+        async function sendMessage() {
+            const input = document.getElementById('input-box');
+            const chatBox = document.getElementById('chat-box');
+            const message = input.value.trim();
+            if(!message) return;
 
-      // Show typing status
-      showTypingIndicator();
+            // 1. 유저 말풍선 추가
+            chatBox.innerHTML += `
+                <div class="message-row user">
+                    <div class="bubble">${message}</div>
+                </div>
+            `;
+            
+            const payload = { message: message, history: chatHistory };
+            input.value = '';
+            chatBox.scrollTop = chatBox.scrollHeight;
 
-      try {
-        // Call FastAPI Backend
-        const response = await fetch('/api/chat', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            agent_id: activeAgentId,
-            messages: chatHistories[activeAgentId]
-          })
-        });
+            // 로딩 인디케이터 표시
+            const loadingId = 'loading-' + Date.now();
+            chatBox.innerHTML += `
+                <div class="message-row bot" id="${loadingId}">
+                    <div class="bubble" style="color:var(--text-muted); background:none; box-shadow:none; border:none;">
+                        <i class="fa-solid fa-circle-notch fa-spin"></i> 웰다 엔진이 컨텍스트 분석 중...
+                    </div>
+                </div>
+            `;
+            chatBox.scrollTop = chatBox.scrollHeight;
 
-        removeTypingIndicator();
+            try {
+                // 2. 버셀 서버리스 API 엔드포인트 호출
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await response.json();
 
-        if (!response.ok) throw new Error('Network response error');
-        
-        const data = await response.json();
-        
-        // Add assistant message
-        const assistantMessage = { role: 'assistant', content: data.content };
-        chatHistories[activeAgentId].push(assistantMessage);
-        appendMessageUI('assistant', data.content);
-        scrollToBottom();
+                // 로딩 제거
+                document.getElementById(loadingId).remove();
 
-      } catch (error) {
-        console.error('Error sending message:', error);
-        removeTypingIndicator();
-        
-        // Fallback offline mock response
-        const fallbackText = "죄송합니다, 잠시 백엔드 연결에 오류가 발생했습니다. 로컬 데모 응답을 제공합니다.\n\n대웅 웰다는 항상 스마트한 웰니스를 응원합니다. 질문하신 내용에 대한 정밀 진단은 API 키를 설정하거나 Vercel 서버가 실행 중일 때 제공됩니다.";
-        const assistantMessage = { role: 'assistant', content: fallbackText };
-        chatHistories[activeAgentId].push(assistantMessage);
-        appendMessageUI('assistant', fallbackText);
-        scrollToBottom();
-      }
-    }
-
-    // Setup Event Listeners
-    function setupEventListeners() {
-      // Send button click
-      sendBtn.addEventListener('click', sendMessage);
-
-      // Enter key press in input
-      messageInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-          e.preventDefault();
-          sendMessage();
+                // 3. 내부 멀티에이전트 로그 결합 및 결과 출력
+                chatBox.innerHTML += `
+                    <div class="message-row bot">
+                        <div class="agent-log">
+                            <div class="agent-log-title"><i class="fa-solid fa-microchip"></i> Agent 1: 영양 분석 인프라 로그</div>
+                            ${data.analysis_log}
+                        </div>
+                        <div class="bubble" style="margin-top: 6px;">
+                            ${data.answer}
+                        </div>
+                    </div>
+                `;
+                
+                // 4. 컨텍스트 유지를 위한 내부 메모리 적재
+                chatHistory.push({ role: "user", content: message });
+                chatHistory.push({ role: "assistant", content: data.answer });
+                
+            } catch (error) {
+                document.getElementById(loadingId).remove();
+                chatBox.innerHTML += `
+                    <div class="message-row bot">
+                        <div class="bubble" style="background:#FEF2F2; color:#991B1B; border-color:#FCA5A5;">
+                            <i class="fa-solid fa-triangle-exclamation"></i> 시스템 연동 중 에러가 발생했습니다. 환경변수(API Key)를 확인해 주세요.
+                        </div>
+                    </div>
+                `;
+            }
+            
+            chatBox.scrollTop = chatBox.scrollHeight;
         }
-      });
-
-      // Clear chat history
-      clearChatBtn.addEventListener('click', () => {
-        if (confirm('현재 에이전트와의 대화 기록을 초기화하시겠습니까?')) {
-          const agent = agents.find(a => a.id === activeAgentId);
-          chatHistories[activeAgentId] = [
-            { role: 'assistant', content: (agent && agent.welcome_message) || '안녕하세요! 어떻게 도움을 드릴까요?' }
-          ];
-          renderMessages();
-        }
-      });
-
-      // Info button click
-      infoBtn.addEventListener('click', () => {
-        const agent = agents.find(a => a.id === activeAgentId);
-        if (agent) {
-          alert(`에이전트 정보:\n\n이름: ${agent.name}\n역할: ${agent.role}\n설명: ${agent.description}\n\n대웅 웰다 프리미엄 건강 상담 에이전트.`);
-        }
-      });
-    }
-
-    // Start App
-    window.addEventListener('DOMContentLoaded', init);
-  </script>
+    </script>
 </body>
 </html>
