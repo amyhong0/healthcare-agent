@@ -6,6 +6,7 @@ import os
 import yaml
 import traceback
 import google.generativeai as genai
+from datetime import datetime, timezone
 
 app = FastAPI()
 
@@ -58,11 +59,14 @@ async def chat_endpoint(request: ChatRequest):
         gemini_api_key = get_gemini_api_key()
         genai.configure(api_key=gemini_api_key)
 
+        current_timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+        enriched_input = f"[System Time: {current_timestamp}] {user_input}"
+
         # --- Stage 1: 임상 데이터 추론 엔진 가동 ---
         analyzer_prompt = agents["clinical_reasoner"]["system_prompt"]
         model1 = genai.GenerativeModel("gemini-2.5-flash", system_instruction=analyzer_prompt)
         response_stage1 = model1.generate_content(
-            f"사용자 복합 데이터 입력 (JSON 컨텍스트): {user_input}",
+            f"사용자 복합 데이터 입력 (JSON 컨텍스트): {enriched_input}",
             generation_config={"temperature": 0.2}
         )
         analysis_result = response_stage1.text
