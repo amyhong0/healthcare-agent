@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from typing import List, Dict
+from typing import Any, List, Dict
 import os
 import yaml
 import google.generativeai as genai
