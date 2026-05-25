@@ -6,16 +6,18 @@ import os
 import yaml
 import traceback
 import google.generativeai as genai
-from dotenv import load_dotenv
-
-load_dotenv()
 
 app = FastAPI()
 
-# 💡 YAML 설정 동적 로드 함수
+# 💡 YAML 설정 동적 로드 함수 (Vercel 안전 경로)
 def load_agent_config():
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    yaml_path = os.path.join(current_dir, "agent_config.yaml")
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    yaml_path = os.path.join(base_dir, "agent_config.yaml")
+    
+    if not os.path.exists(yaml_path):
+        # Fallback for some serverless environments
+        yaml_path = os.path.join(os.getcwd(), "api", "agent_config.yaml")
+        
     with open(yaml_path, "r", encoding="utf-8") as f:
         return yaml.safe_load(f)
 
