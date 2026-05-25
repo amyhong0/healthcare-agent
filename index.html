@@ -14,13 +14,14 @@
             --agent-log-text: #4ADE80;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", Roboto, sans-serif; }
-        body { background-color: #E2E8F0; display: flex; justify-content: center; height: 100dvh; overflow: hidden; }
+        html, body { height: 100%; height: -webkit-fill-available; height: 100dvh; margin: 0; padding: 0; }
+        body { background-color: #E2E8F0; display: flex; justify-content: center; overflow: hidden; }
         
         /* App Layout */
-        .app-container { width: 100%; max-width: 480px; background: var(--aha-card); height: 100%; display: flex; flex-direction: column; box-shadow: 0 10px 25px rgba(0,0,0,0.1); position: relative; }
+        .app-container { width: 100%; max-width: 480px; background: var(--aha-card); height: 100%; height: -webkit-fill-available; display: flex; flex-direction: column; box-shadow: 0 10px 25px rgba(0,0,0,0.1); position: relative; }
         
         /* Dashboard */
-        .dashboard { padding: 16px 20px; background: white; border-bottom: 1px solid #E2E8F0; }
+        .dashboard { flex-shrink: 0; padding: 16px 20px; background: white; border-bottom: 1px solid #E2E8F0; }
         .dash-title { font-size: 11px; color: #718096; font-weight: bold; text-transform: uppercase; margin-bottom: 10px; }
         .dash-grid { display: flex; gap: 10px; }
         .dash-item { flex: 1; background: #F4F6F8; padding: 10px; border-radius: 8px; text-align: center; border: 1px solid #E2E8F0; }
@@ -28,7 +29,7 @@
         .dash-item .val { font-size: 14px; font-weight: 800; color: var(--aha-primary); }
 
         /* Header */
-        .header { padding: 18px 20px; text-align: center; border-bottom: 1px solid #F0F0F0; background: #FFFFFF; z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .header { flex-shrink: 0; padding: 18px 20px; text-align: center; border-bottom: 1px solid #F0F0F0; background: #FFFFFF; z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .header h1 { font-size: 20px; color: var(--aha-dark); font-weight: 800; letter-spacing: -0.5px; display: flex; align-items: center; gap: 6px; }
         .header h1 span { color: var(--aha-primary); }
         .header p { font-size: 12px; color: #718096; margin-top: 4px; }
@@ -89,7 +90,7 @@
         @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
 
         /* Input Area */
-        .input-container { padding: 14px 20px 24px; background: white; border-top: 1px solid #F0F0F0; display: flex; gap: 10px; align-items: flex-end; }
+        .input-container { padding: 14px 20px calc(14px + env(safe-area-inset-bottom)); background: white; border-top: 1px solid #F0F0F0; display: flex; gap: 10px; align-items: flex-end; flex-shrink: 0; z-index: 10; }
         .input-box { flex: 1; background: #F4F6F8; border: 1px solid #E2E8F0; border-radius: 24px; padding: 14px 20px; font-size: 16px; outline: none; transition: all 0.2s; }
         .input-box:focus { border-color: var(--aha-primary); background: white; box-shadow: 0 0 0 3px rgba(255, 106, 0, 0.1); }
         .send-btn { background: var(--aha-primary); color: white; border: none; width: 48px; height: 48px; border-radius: 24px; cursor: pointer; display: flex; justify-content: center; align-items: center; transition: transform 0.1s; flex-shrink: 0; }
@@ -235,7 +236,7 @@
                 progStat1.innerText = elapsed.toFixed(1) + 's';
                 
                 // 시간이 지날수록 증가 속도를 서서히 늦춰, 멈추지 않고 98%까지 무한 점근(Asymptotic)하는 공식
-                // 수치 8.0을 조절하면 초반 증가 속도가 달라집니다.
+                // 수치 8.0을 조절하면 초반 증가 속도가 달라짐
                 let pct = 98 * (1 - Math.exp(-elapsed / 8.0)); 
                 progBar1.style.width = pct + '%';
             }, 100);
