@@ -66,7 +66,7 @@ async def chat_endpoint(request: ChatRequest):
         analyzer_prompt = agents["clinical_reasoner"]["system_prompt"]
         model1 = genai.GenerativeModel("gemini-2.5-flash", system_instruction=analyzer_prompt)
         response_stage1 = model1.generate_content(
-            f"사용자 복합 데이터 입력 (JSON 컨텍스트): {enriched_input}",
+            f"복합 데이터 입력 (JSON 컨텍스트): {enriched_input}",
             generation_config={"temperature": 0.2}
         )
         analysis_result = response_stage1.text
@@ -80,7 +80,7 @@ async def chat_endpoint(request: ChatRequest):
         )
         final_coach_answer = response_stage2.text
 
-        # AHA UI에 분석 로그와 최종 답변을 분리해서 전달
+        # UI에 분석 로그와 최종 답변을 분리해서 전달
         return {
             "analysis_log": analysis_result.replace("\n", "<br>"),
             "answer": final_coach_answer.replace("\n", "<br>")
