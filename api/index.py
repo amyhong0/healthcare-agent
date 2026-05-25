@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 from typing import Any, List, Dict
 import os
@@ -53,6 +54,16 @@ def extract_response_text(response: Any) -> str:
         return str(content)
     return str(response)
 
+
+@app.get("/")
+async def serve_ui():
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    html_path = os.path.join(current_dir, "..", "index.html")
+    try:
+        with open(html_path, "r", encoding="utf-8") as f:
+            return HTMLResponse(content=f.read(), status_code=200)
+    except FileNotFoundError:
+        return HTMLResponse(content="<h1>UI file not found.</h1>", status_code=404)
 
 @app.get("/api/chat")
 async def root_get():
