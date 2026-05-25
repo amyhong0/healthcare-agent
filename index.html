@@ -52,10 +52,17 @@
         /* LLM Agent Pipeline UI (Engineers portfolio highlight) */
         .llm-pipeline { width: 100%; max-width: 90%; background: var(--agent-log-bg); border-radius: 12px; padding: 14px 16px; margin-bottom: 12px; font-family: 'Fira Code', 'Consolas', monospace; font-size: 12px; color: #A0AEC0; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
         .llm-pipeline-title { font-size: 11px; color: #718096; margin-bottom: 8px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #333; padding-bottom: 6px; display: flex; justify-content: space-between; }
-        .llm-pipeline .step { margin-bottom: 6px; display: flex; align-items: flex-start; line-height: 1.4; }
-        .llm-pipeline .step::before { content: '>'; color: var(--aha-primary); margin-right: 8px; font-weight: bold; }
-        .llm-pipeline .step.active { color: white; animation: pulse 1.5s infinite; }
-        .llm-pipeline .step.done { color: var(--agent-log-text); }
+        .llm-pipeline .step { margin-bottom: 6px; display: flex; flex-direction: column; line-height: 1.4; }
+        .step-text { display: flex; align-items: flex-start; }
+        .step-text::before { content: '>'; color: var(--aha-primary); margin-right: 8px; font-weight: bold; }
+        .llm-pipeline .step.active .step-text { color: white; animation: pulse 1.5s infinite; }
+        .llm-pipeline .step.done .step-text { color: var(--agent-log-text); }
+        
+        /* Progress Bar */
+        .progress-container { width: 100%; background: #333; height: 4px; border-radius: 2px; margin-top: 6px; overflow: hidden; display: none; }
+        .progress-bar { height: 100%; background: var(--aha-primary); width: 0%; transition: width 0.3s linear; }
+        .progress-status { font-size: 10px; color: #718096; margin-top: 4px; text-align: right; display: none; }
+
         .llm-pipeline .result { margin-top: 10px; padding-top: 10px; border-top: 1px dashed #444; color: #E2E8F0; line-height: 1.5; font-size: 11.5px; max-height: 150px; overflow-y: auto; }
         .llm-pipeline .result strong { color: var(--aha-primary); font-weight: normal; }
         
@@ -179,8 +186,16 @@
                             <span>Clinical Reasoning Pipeline</span>
                             <span style="color:#FF6A00;">Processing</span>
                         </div>
-                        <div id="step1-${pipelineId}" class="step active">Stage 1: 임상 데이터 추론 모델 분석 중... (식단+혈당+활동)</div>
-                        <div id="step2-${pipelineId}" class="step" style="display:none;">Stage 2: 행동 교정 코칭 엔진 생성 중...</div>
+                        <div id="step1-${pipelineId}" class="step active">
+                            <div class="step-text">Stage 1: 임상 데이터 추론 모델 분석 중... (식단+혈당+활동)</div>
+                            <div class="progress-container" id="prog-cont-1-${pipelineId}"><div class="progress-bar" id="prog-bar-1-${pipelineId}"></div></div>
+                            <div class="progress-status" id="prog-stat-1-${pipelineId}">0.0s</div>
+                        </div>
+                        <div id="step2-${pipelineId}" class="step" style="display:none;">
+                            <div class="step-text">Stage 2: 행동 교정 코칭 엔진 생성 중...</div>
+                            <div class="progress-container" id="prog-cont-2-${pipelineId}"><div class="progress-bar" id="prog-bar-2-${pipelineId}"></div></div>
+                            <div class="progress-status" id="prog-stat-2-${pipelineId}">0.0s</div>
+                        </div>
                         <div id="result-${pipelineId}" class="result" style="display:none;"></div>
                     </div>
                 </div>
@@ -196,6 +211,23 @@
             `;
             chatContainer.insertAdjacentHTML('beforeend', pipelineHtml);
             scrollToBottom();
+            
+            // Progress Bar Animation Logic
+            const progCont1 = document.getElementById(`prog-cont-1-${pipelineId}`);
+            const progBar1 = document.getElementById(`prog-bar-1-${pipelineId}`);
+            const progStat1 = document.getElementById(`prog-stat-1-${pipelineId}`);
+            
+            progCont1.style.display = 'block';
+            progStat1.style.display = 'block';
+            
+            let startTime1 = Date.now();
+            let timer1 = setInterval(() => {
+                let elapsed = (Date.now() - startTime1) / 1000;
+                progStat1.innerText = elapsed.toFixed(1) + 's';
+                // 최대 95%까지만 차오름 (실제 서버 응답을 기다림)
+                let pct = Math.min(95, (elapsed / 4.0) * 100); 
+                progBar1.style.width = pct + '%';
+            }, 100);
 
             try {
                 // API 호출 - 현재 대시보드 상태를 컨텍스트로 함께 전송
@@ -221,46 +253,69 @@
                 const typing = document.getElementById(`typing-${pipelineId}`);
                 
                 // Stage 1 완료
+                clearInterval(timer1);
+                progBar1.style.width = '100%';
                 step1.classList.remove('active');
                 step1.classList.add('done');
-                step1.innerText = 'Stage 1: 대사 반응 및 혈당 스파이크 예측 완료';
+                step1.querySelector('.step-text').innerText = 'Stage 1: 대사 반응 및 혈당 스파이크 예측 완료';
                 
                 // Stage 2 시작 및 완료 처리
                 setTimeout(() => {
                     step2.style.display = 'flex';
-                    step2.classList.remove('active');
-                    step2.classList.add('done');
-                    step2.innerText = 'Stage 2: 행동 교정 지침 변환 완료';
                     
-                    // 분석 로그 렌더링
-                    resultLog.style.display = 'block';
-                    resultLog.innerHTML = `[Reasoning Engine Output]<br>${data.analysis_log}`;
+                    const progCont2 = document.getElementById(`prog-cont-2-${pipelineId}`);
+                    const progBar2 = document.getElementById(`prog-bar-2-${pipelineId}`);
+                    const progStat2 = document.getElementById(`prog-stat-2-${pipelineId}`);
                     
-                    scrollToBottom();
+                    progCont2.style.display = 'block';
+                    progStat2.style.display = 'block';
                     
-                    // 최종 코칭 답변 렌더링
+                    let startTime2 = Date.now();
+                    let timer2 = setInterval(() => {
+                        let elapsed = (Date.now() - startTime2) / 1000;
+                        progStat2.innerText = elapsed.toFixed(1) + 's';
+                        let pct = Math.min(95, (elapsed / 2.5) * 100); 
+                        progBar2.style.width = pct + '%';
+                    }, 100);
+
+                    // 시뮬레이션용 지연 후 최종 렌더링
                     setTimeout(() => {
-                        typing.remove();
-                        const finalHtml = `
-                            <div class="message-wrapper bot">
-                                <div class="bot-profile">
-                                    <div class="avatar">W</div>
-                                    <div class="name">AHA 코치</div>
-                                </div>
-                                <div class="bubble">${data.answer}</div>
-                            </div>
-                        `;
-                        chatContainer.insertAdjacentHTML('beforeend', finalHtml);
+                        clearInterval(timer2);
+                        progBar2.style.width = '100%';
+                        step2.classList.remove('active');
+                        step2.classList.add('done');
+                        step2.querySelector('.step-text').innerText = 'Stage 2: 행동 교정 지침 변환 완료';
+                        
+                        // 분석 로그 렌더링
+                        resultLog.style.display = 'block';
+                        resultLog.innerHTML = `[Reasoning Engine Output]<br>${data.analysis_log}`;
+                        
                         scrollToBottom();
                         
-                        // 메모리 업데이트
-                        chatHistory.push({ role: "user", content: message });
-                        chatHistory.push({ role: "assistant", content: data.answer });
-                        
-                        input.disabled = false;
-                        sendBtn.disabled = false;
-                        input.focus();
-                    }, 500);
+                        // 최종 코칭 답변 렌더링
+                        setTimeout(() => {
+                            typing.remove();
+                            const finalHtml = `
+                                <div class="message-wrapper bot">
+                                    <div class="bot-profile">
+                                        <div class="avatar">W</div>
+                                        <div class="name">AHA 코치</div>
+                                    </div>
+                                    <div class="bubble">${data.answer}</div>
+                                </div>
+                            `;
+                            chatContainer.insertAdjacentHTML('beforeend', finalHtml);
+                            scrollToBottom();
+                            
+                            // 메모리 업데이트
+                            chatHistory.push({ role: "user", content: message });
+                            chatHistory.push({ role: "assistant", content: data.answer });
+                            
+                            input.disabled = false;
+                            sendBtn.disabled = false;
+                            input.focus();
+                        }, 500);
+                    }, 1500);
 
                 }, 400); // 딜레이로 에이전트 처리 시각적 연출
 
