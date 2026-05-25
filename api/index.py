@@ -54,7 +54,7 @@ def extract_response_text(response: Any) -> str:
     return str(response)
 
 
-@app.post("/api/chat")
+@app.post("/")
 async def chat_endpoint(request: ChatRequest):
     try:
         # 1. YAML 환경 파일 로드
