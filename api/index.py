@@ -6,7 +6,7 @@ import os
 import yaml
 import traceback
 import google.generativeai as genai
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 
 app = FastAPI()
 
@@ -59,7 +59,8 @@ async def chat_endpoint(request: ChatRequest):
         gemini_api_key = get_gemini_api_key()
         genai.configure(api_key=gemini_api_key)
 
-        current_timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+        kst = timezone(timedelta(hours=9))
+        current_timestamp = datetime.now(kst).strftime("%Y-%m-%dT%H:%M:%S KST")
         enriched_input = f"[System Time: {current_timestamp}] {user_input}"
 
         # --- Stage 1: 임상 데이터 추론 엔진 가동 ---

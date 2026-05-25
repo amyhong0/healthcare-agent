@@ -246,6 +246,11 @@
                     throw new Error(data.detail || "Server Error");
                 }
 
+                // 마크다운 볼드체(**텍스트**)를 HTML <b>태그로 파싱하는 함수
+                const parseMarkdown = (text) => {
+                    return text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>');
+                };
+
                 // 3. UI 애니메이션 효과 (LLM 프로세싱 시뮬레이션)
                 const step1 = document.getElementById(`step1-${pipelineId}`);
                 const step2 = document.getElementById(`step2-${pipelineId}`);
@@ -295,13 +300,14 @@
                         // 최종 코칭 답변 렌더링
                         setTimeout(() => {
                             typing.remove();
+                            const parsedAnswer = parseMarkdown(data.answer);
                             const finalHtml = `
                                 <div class="message-wrapper bot">
                                     <div class="bot-profile">
                                         <div class="avatar">W</div>
                                         <div class="name">AHA 코치</div>
                                     </div>
-                                    <div class="bubble">${data.answer}</div>
+                                    <div class="bubble">${parsedAnswer}</div>
                                 </div>
                             `;
                             chatContainer.insertAdjacentHTML('beforeend', finalHtml);
@@ -309,7 +315,7 @@
                             
                             // 메모리 업데이트
                             chatHistory.push({ role: "user", content: message });
-                            chatHistory.push({ role: "assistant", content: data.answer });
+                            chatHistory.push({ role: "assistant", content: parsedAnswer });
                             
                             input.disabled = false;
                             sendBtn.disabled = false;
