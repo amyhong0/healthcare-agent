@@ -59,9 +59,18 @@
         .llm-pipeline .step.done .step-text { color: var(--agent-log-text); }
         
         /* Progress Bar */
-        .progress-container { width: 100%; background: #333; height: 4px; border-radius: 2px; margin-top: 6px; overflow: hidden; display: none; }
-        .progress-bar { height: 100%; background: var(--aha-primary); width: 0%; transition: width 0.3s linear; }
-        .progress-status { font-size: 10px; color: #718096; margin-top: 4px; text-align: right; display: none; }
+        .progress-container { width: 100%; background: #333; height: 6px; border-radius: 3px; margin-top: 6px; overflow: hidden; display: none; }
+        .progress-bar { 
+            height: 100%; 
+            width: 0%; 
+            background-color: var(--aha-primary); 
+            background-image: linear-gradient(45deg, rgba(255,255,255,0.15) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0.15) 75%, transparent 75%, transparent);
+            background-size: 1rem 1rem;
+            animation: progress-stripes 1s linear infinite;
+            transition: width 0.3s linear; 
+        }
+        @keyframes progress-stripes { from { background-position: 1rem 0; } to { background-position: 0 0; } }
+        .progress-status { font-size: 10px; color: #718096; margin-top: 4px; text-align: right; display: none; font-family: monospace; }
 
         .llm-pipeline .result { margin-top: 10px; padding-top: 10px; border-top: 1px dashed #444; color: #E2E8F0; line-height: 1.5; font-size: 11.5px; max-height: 150px; overflow-y: auto; }
         .llm-pipeline .result strong { color: var(--aha-primary); font-weight: normal; }
@@ -224,8 +233,10 @@
             let timer1 = setInterval(() => {
                 let elapsed = (Date.now() - startTime1) / 1000;
                 progStat1.innerText = elapsed.toFixed(1) + 's';
-                // 최대 95%까지만 차오름 (실제 서버 응답을 기다림)
-                let pct = Math.min(95, (elapsed / 4.0) * 100); 
+                
+                // 시간이 지날수록 증가 속도를 서서히 늦춰, 멈추지 않고 98%까지 무한 점근(Asymptotic)하는 공식
+                // 수치 8.0을 조절하면 초반 증가 속도가 달라집니다.
+                let pct = 98 * (1 - Math.exp(-elapsed / 8.0)); 
                 progBar1.style.width = pct + '%';
             }, 100);
 
@@ -279,7 +290,9 @@
                     let timer2 = setInterval(() => {
                         let elapsed = (Date.now() - startTime2) / 1000;
                         progStat2.innerText = elapsed.toFixed(1) + 's';
-                        let pct = Math.min(95, (elapsed / 2.5) * 100); 
+                        
+                        // Stage 2 역시 멈추지 않고 98%까지 천천히 차오르는 점근적 공식 적용
+                        let pct = 98 * (1 - Math.exp(-elapsed / 5.0)); 
                         progBar2.style.width = pct + '%';
                     }, 100);
 
