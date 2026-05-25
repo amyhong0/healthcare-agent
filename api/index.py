@@ -45,7 +45,7 @@ async def serve_ui():
 
 @app.get("/api/chat")
 async def root_get():
-    return {"message": "Welda API is running. Please use POST /api/chat to send messages."}
+    return {"message": "AHA API is running. Please use POST /api/chat to send messages."}
 
 @app.post("/api/chat")
 async def chat_endpoint(request: ChatRequest):
@@ -75,12 +75,12 @@ async def chat_endpoint(request: ChatRequest):
         coach_prompt = agents["behavior_coach"]["system_prompt"]
         model2 = genai.GenerativeModel("gemini-2.5-flash", system_instruction=coach_prompt)
         response_stage2 = model2.generate_content(
-            f"임상 엔진 분석 로그:\n{analysis_result}\n\n위 추론 결과를 바탕으로, 웰다 철학에 맞는 구체적이고 다정한 코칭 메시지를 작성해줘.",
+            f"임상 엔진 분석 로그:\n{analysis_result}\n\n위 추론 결과를 바탕으로, AHA 철학에 맞는 구체적이고 다정한 코칭 메시지를 작성해줘.",
             generation_config={"temperature": 0.6}
         )
         final_coach_answer = response_stage2.text
 
-        # 웰다 UI에 분석 로그와 최종 답변을 분리해서 전달
+        # AHA UI에 분석 로그와 최종 답변을 분리해서 전달
         return {
             "analysis_log": analysis_result.replace("\n", "<br>"),
             "answer": final_coach_answer.replace("\n", "<br>")
