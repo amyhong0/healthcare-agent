@@ -60,8 +60,11 @@ async def chat_endpoint(request: ChatRequest):
         genai.configure(api_key=gemini_api_key)
 
         kst = timezone(timedelta(hours=9))
-        current_timestamp = datetime.now(kst).strftime("%Y-%m-%dT%H:%M:%S KST")
-        enriched_input = f"[System Time: {current_timestamp}] {user_input}"
+        current_time = datetime.now(kst)
+        current_timestamp = current_time.strftime("%Y-%m-%dT%H:%M:%S KST")
+        friendly_time_str = current_time.strftime("%p %I시 %M분").replace("AM", "오전").replace("PM", "오후")
+        
+        enriched_input = f"[시스템 현재 시각: {current_timestamp} ({friendly_time_str})] \n{user_input}"
 
         # --- Stage 1: 임상 데이터 추론 엔진 가동 ---
         analyzer_prompt = agents["clinical_reasoner"]["system_prompt"]
