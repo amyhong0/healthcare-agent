@@ -5,6 +5,9 @@ from typing import Any, List, Dict
 import os
 import yaml
 import google.generativeai as genai
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = FastAPI()
 
@@ -54,7 +57,7 @@ async def chat_endpoint(request: ChatRequest):
 
         # --- Stage 1: 임상 데이터 추론 엔진 가동 ---
         analyzer_prompt = agents["clinical_reasoner"]["system_prompt"]
-        model1 = genai.GenerativeModel("gemini-pro", system_instruction=analyzer_prompt)
+        model1 = genai.GenerativeModel("gemini-2.5-flash", system_instruction=analyzer_prompt)
         response_stage1 = model1.generate_content(
             f"사용자 복합 데이터 입력 (JSON 컨텍스트): {user_input}",
             generation_config=genai.types.GenerationConfig(temperature=0.2)
@@ -63,7 +66,7 @@ async def chat_endpoint(request: ChatRequest):
 
         # --- Stage 2: 행동 변화 코치 에이전트 가동 (Context Chaining) ---
         coach_prompt = agents["behavior_coach"]["system_prompt"]
-        model2 = genai.GenerativeModel("gemini-pro", system_instruction=coach_prompt)
+        model2 = genai.GenerativeModel("gemini-2.5-flash", system_instruction=coach_prompt)
         response_stage2 = model2.generate_content(
             f"임상 엔진 분석 로그:\n{analysis_result}\n\n위 추론 결과를 바탕으로, 웰다 철학에 맞는 구체적이고 다정한 코칭 메시지를 작성해줘.",
             generation_config=genai.types.GenerationConfig(temperature=0.6)
