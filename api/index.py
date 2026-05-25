@@ -54,7 +54,6 @@ def extract_response_text(response: Any) -> str:
     return str(response)
 
 
-@app.get("/")
 @app.get("/api/chat")
 async def root_get():
     return {"message": "Welda API is running. Please use POST /api/chat to send messages."}
