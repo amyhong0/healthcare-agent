@@ -210,6 +210,10 @@
                 
                 const data = await response.json();
 
+                if (!response.ok) {
+                    throw new Error(data.detail || "Server Error");
+                }
+
                 // 3. UI 애니메이션 효과 (LLM 프로세싱 시뮬레이션)
                 const step1 = document.getElementById(`step1-${pipelineId}`);
                 const step2 = document.getElementById(`step2-${pipelineId}`);
@@ -267,14 +271,15 @@
                 }, 400); // 딜레이로 에이전트 처리 시각적 연출
 
             } catch (error) {
-                document.getElementById(`typing-${pipelineId}`).remove();
+                document.getElementById(`typing-${pipelineId}`)?.remove();
                 chatContainer.insertAdjacentHTML('beforeend', `
                     <div class="message-wrapper bot">
-                        <div class="bubble" style="color:red;">서버 응답에 오류가 발생했습니다. 잠시 후 다시 시도해주세요.</div>
+                        <div class="bubble" style="color:red; font-size:12px; font-family:monospace;">에러 발생: ${error.message}</div>
                     </div>
                 `);
                 input.disabled = false;
                 sendBtn.disabled = false;
+                scrollToBottom();
             }
         }
     </script>
