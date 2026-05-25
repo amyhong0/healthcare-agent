@@ -236,12 +236,6 @@
                     resultLog.style.display = 'block';
                     resultLog.innerHTML = `[Reasoning Engine Output]<br>${data.analysis_log}`;
                     
-                    // 대시보드 모의 업데이트 시뮬레이션
-                    const bslSpan = document.getElementById('current-bsl');
-                    if (bslSpan) {
-                        bslSpan.innerHTML = `142 <span style="font-size:10px; color:red;">▲ mg/dL</span>`;
-                    }
-                    
                     scrollToBottom();
                     
                     // 최종 코칭 답변 렌더링
