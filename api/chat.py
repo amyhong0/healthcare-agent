@@ -53,6 +53,9 @@ def extract_response_text(response: Any) -> str:
         return str(content)
     return str(response)
 
+@app.get("/")
+async def root_endpoint():
+    return {"detail": "Use POST /api/chat with JSON body { message, history }"}
 
 @app.post("/")
 async def chat_endpoint(request: ChatRequest):
