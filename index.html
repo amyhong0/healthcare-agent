@@ -199,7 +199,7 @@
 
             try {
                 // API 호출 - 현재 대시보드 상태를 컨텍스트로 함께 전송
-                const contextStr = \`[현재상태] 혈당: 105mg/dL, 마지막 식사: 3시간 전, 활동량: 2100걸음(낮음) | [입력식단] \${message}\`;
+                const contextStr = "[현재상태] 혈당: 105mg/dL, 마지막 식사: 3시간 전, 활동량: 2100걸음(낮음) | [입력식단] " + message;
                 const payload = { message: contextStr, history: chatHistory };
                 
                 const response = await fetch('/api/chat', {
@@ -233,7 +233,10 @@
                     resultLog.innerHTML = `[Reasoning Engine Output]<br>${data.analysis_log}`;
                     
                     // 대시보드 모의 업데이트 시뮬레이션
-                    document.getElementById('current-bsl').innerHTML = `142 <span style="font-size:10px; color:red;">▲ mg/dL</span>`;
+                    const bslSpan = document.getElementById('current-bsl');
+                    if (bslSpan) {
+                        bslSpan.innerHTML = `142 <span style="font-size:10px; color:red;">▲ mg/dL</span>`;
+                    }
                     
                     scrollToBottom();
                     
