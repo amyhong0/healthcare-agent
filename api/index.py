@@ -81,15 +81,15 @@ async def chat_endpoint(request: ChatRequest):
         gemini_api_key = get_gemini_api_key()
         genai.configure(api_key=gemini_api_key)
 
-        # --- Stage 1: 영양 분석 에이전트 가동 ---
-        analyzer_prompt = agents["nutrition_analyzer"]["system_prompt"]
+        # --- Stage 1: 임상 데이터 추론 엔진 가동 ---
+        analyzer_prompt = agents["clinical_reasoner"]["system_prompt"]
         response_stage1 = genai.chat.completions.create(
             model="gemini-1.5",
             messages=[
                 {"author": "system", "content": analyzer_prompt},
-                {"author": "user", "content": f"사용자 식단 기록: {user_input}"}
+                {"author": "user", "content": f"사용자 복합 데이터 입력 (JSON 컨텍스트): {user_input}"}
             ],
-            temperature=0.3  # 분석은 정밀하게
+            temperature=0.2  # 정확한 임상 추론
         )
         analysis_result = extract_response_text(response_stage1)
 
@@ -101,10 +101,10 @@ async def chat_endpoint(request: ChatRequest):
                 {"author": "system", "content": coach_prompt},
                 {
                     "author": "user",
-                    "content": f"영양 분석 에이전트의 결과:\n{analysis_result}\n\n이 결과를 바탕으로 사용자에게 친절한 개인화 웰다 코칭 문장을 작성해줘."
+                    "content": f"임상 엔진 분석 로그:\n{analysis_result}\n\n위 추론 결과를 바탕으로, 웰다 철학에 맞는 구체적이고 다정한 코칭 메시지를 작성해줘."
                 }
             ],
-            temperature=0.7  # 코칭은 풍부하고 다정하게
+            temperature=0.6
         )
         final_coach_answer = extract_response_text(response_stage2)
 

@@ -19,6 +19,14 @@
         /* App Layout */
         .app-container { width: 100%; max-width: 480px; background: var(--welda-card); height: 100%; display: flex; flex-direction: column; box-shadow: 0 10px 25px rgba(0,0,0,0.1); position: relative; }
         
+        /* Dashboard */
+        .dashboard { padding: 16px 20px; background: white; border-bottom: 1px solid #E2E8F0; }
+        .dash-title { font-size: 11px; color: #718096; font-weight: bold; text-transform: uppercase; margin-bottom: 10px; }
+        .dash-grid { display: flex; gap: 10px; }
+        .dash-item { flex: 1; background: #F4F6F8; padding: 10px; border-radius: 8px; text-align: center; border: 1px solid #E2E8F0; }
+        .dash-item .label { font-size: 10px; color: #718096; margin-bottom: 4px; }
+        .dash-item .val { font-size: 14px; font-weight: 800; color: var(--welda-primary); }
+
         /* Header */
         .header { padding: 18px 20px; text-align: center; border-bottom: 1px solid #F0F0F0; background: #FFFFFF; z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .header h1 { font-size: 20px; color: var(--welda-dark); font-weight: 800; letter-spacing: -0.5px; display: flex; align-items: center; gap: 6px; }
@@ -77,26 +85,46 @@
 <body>
     <div class="app-container">
         <header class="header">
-            <h1>Welda <span>AI</span></h1>
-            <p>대웅제약 지속가능한 혈당 다이어트 코치</p>
-            <div class="badge">Multi-Agent LLM Pipeline</div>
+            <h1>Welda <span>AI</span> Engineering</h1>
+            <p>Clinical Reasoning & Context Chaining Pipeline</p>
+            <div class="badge">LLM Engineer Portfolio</div>
         </header>
+
+        <!-- 모의 CGM(연속혈당측정기) 및 대사 데이터 대시보드 -->
+        <div class="dashboard">
+            <div class="dash-title">📊 Current Metabolism State</div>
+            <div class="dash-grid">
+                <div class="dash-item">
+                    <div class="label">Current BSL</div>
+                    <div class="val" id="current-bsl">105 <span style="font-size:10px">mg/dL</span></div>
+                </div>
+                <div class="dash-item">
+                    <div class="label">Last Meal</div>
+                    <div class="val">3 hrs ago</div>
+                </div>
+                <div class="dash-item">
+                    <div class="label">Activity</div>
+                    <div class="val">Low (2.1k steps)</div>
+                </div>
+            </div>
+        </div>
 
         <div id="chat-container" class="chat-container">
             <div class="message-wrapper bot">
                 <div class="bot-profile">
                     <div class="avatar">W</div>
-                    <div class="name">웰다 코치</div>
+                    <div class="name">웰다 시스템</div>
                 </div>
                 <div class="bubble">
-                    안녕하세요! 건강해져서 살이 빠지는 선순환, 웰다(Welda) 코치입니다.<br><br>
-                    오늘 어떤 식사를 하셨나요? 편하게 기록해주세요. 혈당 스파이크와 영양 밸런스를 분석해 드릴게요! 🥗
+                    안녕하세요. 웰다 LLM 파이프라인 테스트 환경입니다.<br>
+                    사용자의 현재 혈당(105mg/dL)과 활동량 데이터를 기반으로, 지금 섭취할 식단을 입력하시면 <b>1) 대사 반응 예측</b>과 <b>2) 행동 교정 코칭</b>을 순차적으로 수행합니다.<br><br>
+                    (예: "치즈버거 세트를 먹으려고 해")
                 </div>
             </div>
         </div>
 
         <div class="input-container">
-            <input type="text" id="input-box" class="input-box" placeholder="예: 점심에 샐러드와 닭가슴살 먹었어" onkeypress="handleKeyPress(event)">
+            <input type="text" id="input-box" class="input-box" placeholder="식단 입력하여 파이프라인 트리거..." onkeypress="handleKeyPress(event)">
             <button id="send-btn" class="send-btn" onclick="sendMessage()">
                 <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path></svg>
             </button>
@@ -139,19 +167,20 @@
 
             // 2. LLM 추론 과정 (Pipeline) UI 생성
             const pipelineId = 'pipeline-' + Date.now();
+            const bslSimulate = Math.floor(Math.random() * (180 - 140) + 140); // 140~180 모의 결과
             const pipelineHtml = `
                 <div class="message-wrapper bot" id="wrapper-${pipelineId}">
                     <div class="bot-profile">
-                        <div class="avatar" style="background:#1E1E1E;">AI</div>
-                        <div class="name">Agent Orchestrator</div>
+                        <div class="avatar" style="background:#1E1E1E;">⚙️</div>
+                        <div class="name">LLM Orchestrator</div>
                     </div>
                     <div class="llm-pipeline" id="${pipelineId}">
                         <div class="llm-pipeline-title">
-                            <span>Backend Processing Log</span>
-                            <span style="color:#FF6A00;">Live</span>
+                            <span>Clinical Reasoning Pipeline</span>
+                            <span style="color:#FF6A00;">Processing</span>
                         </div>
-                        <div id="step1-${pipelineId}" class="step active">Stage 1: Nutrition Analyzer Agent 가동 중...</div>
-                        <div id="step2-${pipelineId}" class="step" style="display:none;">Stage 2: Behavior Coach Agent 가동 중...</div>
+                        <div id="step1-${pipelineId}" class="step active">Stage 1: 임상 데이터 추론 모델 분석 중... (식단+혈당+활동)</div>
+                        <div id="step2-${pipelineId}" class="step" style="display:none;">Stage 2: 행동 교정 코칭 엔진 생성 중...</div>
                         <div id="result-${pipelineId}" class="result" style="display:none;"></div>
                     </div>
                 </div>
@@ -169,8 +198,9 @@
             scrollToBottom();
 
             try {
-                // API 호출
-                const payload = { message: message, history: chatHistory };
+                // API 호출 - 현재 대시보드 상태를 컨텍스트로 함께 전송
+                const contextStr = \`[현재상태] 혈당: 105mg/dL, 마지막 식사: 3시간 전, 활동량: 2100걸음(낮음) | [입력식단] \${message}\`;
+                const payload = { message: contextStr, history: chatHistory };
                 
                 const response = await fetch('/api/chat', {
                     method: 'POST',
@@ -189,18 +219,22 @@
                 // Stage 1 완료
                 step1.classList.remove('active');
                 step1.classList.add('done');
-                step1.innerText = 'Stage 1: 영양 분석 완료 (Context 추출)';
+                step1.innerText = 'Stage 1: 대사 반응 및 혈당 스파이크 예측 완료';
                 
                 // Stage 2 시작 및 완료 처리
                 setTimeout(() => {
                     step2.style.display = 'flex';
                     step2.classList.remove('active');
                     step2.classList.add('done');
-                    step2.innerText = 'Stage 2: 맞춤형 웰다 코칭 생성 완료';
+                    step2.innerText = 'Stage 2: 행동 교정 지침 변환 완료';
                     
                     // 분석 로그 렌더링
                     resultLog.style.display = 'block';
-                    resultLog.innerHTML = `[Context Chaining Payload]<br>${data.analysis_log}`;
+                    resultLog.innerHTML = `[Reasoning Engine Output]<br>${data.analysis_log}`;
+                    
+                    // 대시보드 모의 업데이트 시뮬레이션
+                    document.getElementById('current-bsl').innerHTML = `142 <span style="font-size:10px; color:red;">▲ mg/dL</span>`;
+                    
                     scrollToBottom();
                     
                     // 최종 코칭 답변 렌더링
