@@ -6,7 +6,7 @@
     <title>AHA AI Coach | AHA LLM Portfolio</title>
     <style>
         :root {
-            --aha-primary: #FF6A00; /* AHA 釉뚮옖???ㅻ젋吏 */
+            --aha-primary: #FF6A00; /* AHA 브랜드 오렌지 */
             --aha-dark: #222222;
             --aha-bg: #F4F6F8;
             --aha-card: #FFFFFF;
@@ -14,34 +14,14 @@
             --agent-log-text: #4ADE80;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", Roboto, sans-serif; }
-        
-        html, body { 
-            position: fixed; 
-            top: 0; left: 0; right: 0; bottom: 0;
-            width: 100%; 
-            margin: 0; 
-            padding: 0; 
-            background-color: #E2E8F0; 
-            overflow: hidden;
-        }
-        
-        /* App Layout */
-        .app-container { 
-            position: absolute;
-            top: 0; bottom: 0; left: 0; right: 0;
-            width: 100%; 
-            max-width: 480px; 
-            margin: 0 auto; 
-            background: var(--aha-card); 
-            display: flex; 
-            flex-direction: column; 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1); 
-            overflow: hidden;
-        }
 
-        
+        body { background-color: #E2E8F0; display: flex; justify-content: center; height: 100vh; overflow: hidden; }
+
+        /* App Layout */
+        .app-container { width: 100%; max-width: 480px; background: var(--aha-card); height: 100%; display: flex; flex-direction: column; box-shadow: 0 10px 25px rgba(0,0,0,0.1); position: relative; }
+
         /* Dashboard */
-        .dashboard { flex-shrink: 0; padding: 16px 20px; background: white; border-bottom: 1px solid #E2E8F0; }
+        .dashboard { padding: 16px 20px; background: white; border-bottom: 1px solid #E2E8F0; }
         .dash-title { font-size: 11px; color: #718096; font-weight: bold; text-transform: uppercase; margin-bottom: 10px; }
         .dash-grid { display: flex; gap: 10px; }
         .dash-item { flex: 1; background: #F4F6F8; padding: 10px; border-radius: 8px; text-align: center; border: 1px solid #E2E8F0; }
@@ -49,59 +29,59 @@
         .dash-item .val { font-size: 14px; font-weight: 800; color: var(--aha-primary); }
 
         /* Header */
-        .header { flex-shrink: 0; padding: 18px 20px; text-align: center; border-bottom: 1px solid #F0F0F0; background: #FFFFFF; z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .header { padding: 18px 20px; text-align: center; border-bottom: 1px solid #F0F0F0; background: #FFFFFF; z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .header h1 { font-size: 20px; color: var(--aha-dark); font-weight: 800; letter-spacing: -0.5px; display: flex; align-items: center; gap: 6px; }
         .header h1 span { color: var(--aha-primary); }
         .header p { font-size: 12px; color: #718096; margin-top: 4px; }
         .badge { display: inline-block; background: #FFF0E6; color: var(--aha-primary); padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 700; margin-top: 8px; letter-spacing: -0.3px; }
 
         /* Chat Area */
-        .chat-container { flex: 1; overflow-y: auto; padding: 20px; padding-bottom: 120px; background: var(--aha-bg); scroll-behavior: smooth; }
+        .chat-container { flex: 1; overflow-y: auto; padding: 20px; background: var(--aha-bg); scroll-behavior: smooth; }
         .message-wrapper { margin-bottom: 24px; display: flex; flex-direction: column; width: 100%; }
         .message-wrapper.user { align-items: flex-end; }
         .message-wrapper.bot { align-items: flex-start; }
-        
+
         /* Chat Bubbles */
         .bubble { max-width: 85%; padding: 14px 18px; border-radius: 20px; font-size: 15px; line-height: 1.5; word-wrap: break-word; letter-spacing: -0.3px; }
         .user .bubble { background: var(--aha-primary); color: white; border-bottom-right-radius: 4px; font-weight: 500; }
         .bot .bubble { background: white; color: var(--aha-dark); border-bottom-left-radius: 4px; border: 1px solid #E2E8F0; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
-        
+
         .bot-profile { display: flex; align-items: center; margin-bottom: 6px; gap: 6px; }
         .bot-profile .avatar { width: 24px; height: 24px; background: var(--aha-primary); color: white; border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 12px; font-weight: bold; }
         .bot-profile .name { font-size: 12px; color: #718096; font-weight: 600; }
 
-        /* LLM Agent Pipeline UI (Engineers portfolio highlight) */
+        /* LLM Agent Pipeline UI */
         .llm-pipeline { width: 100%; max-width: 90%; background: var(--agent-log-bg); border-radius: 12px; padding: 14px 16px; margin-bottom: 12px; font-family: 'Fira Code', 'Consolas', monospace; font-size: 12px; color: #A0AEC0; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        .llm-pipeline-title { font-size: 11px; color: #718096; margin-bottom: 8px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #333; padding-bottom: 6px; display: flex; justify-content: space-between; }
+        .llm-pipeline-title { font-size: 11px; color: #718096; margin-bottom: 8px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #333; padding-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
         .llm-pipeline .step { margin-bottom: 6px; display: flex; flex-direction: column; line-height: 1.4; }
         .step-text { display: flex; align-items: flex-start; }
         .step-text::before { content: '>'; color: var(--aha-primary); margin-right: 8px; font-weight: bold; }
         .llm-pipeline .step.active .step-text { color: white; animation: pulse 1.5s infinite; }
         .llm-pipeline .step.done .step-text { color: var(--agent-log-text); }
-        
+
         /* Progress Bar */
         .progress-container { width: 100%; background: #333; height: 6px; border-radius: 3px; margin-top: 6px; overflow: hidden; display: none; }
-        .progress-bar { 
-            height: 100%; 
-            width: 0%; 
-            background-color: var(--aha-primary); 
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background-color: var(--aha-primary);
             background-image: linear-gradient(45deg, rgba(255,255,255,0.15) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0.15) 75%, transparent 75%, transparent);
             background-size: 1rem 1rem;
             animation: progress-stripes 1s linear infinite;
-            transition: width 0.3s linear; 
+            transition: width 0.3s linear;
         }
         @keyframes progress-stripes { from { background-position: 1rem 0; } to { background-position: 0 0; } }
         .progress-status { font-size: 10px; color: #718096; margin-top: 4px; text-align: right; display: none; font-family: monospace; }
 
         .llm-pipeline .result { margin-top: 10px; padding-top: 10px; border-top: 1px dashed #444; color: #E2E8F0; line-height: 1.5; font-size: 11.5px; max-height: 150px; overflow-y: auto; }
         .llm-pipeline .result strong { color: var(--aha-primary); font-weight: normal; }
-        
+
         /* Scrollbar for agent log */
         .llm-pipeline .result::-webkit-scrollbar { width: 4px; }
         .llm-pipeline .result::-webkit-scrollbar-thumb { background: #444; border-radius: 4px; }
 
         @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
-        
+
         /* Loading Dots */
         .typing-indicator { display: flex; gap: 4px; padding: 6px 4px; }
         .typing-indicator span { width: 6px; height: 6px; background-color: #CBD5E0; border-radius: 50%; animation: bounce 1.4s infinite ease-in-out both; }
@@ -110,8 +90,8 @@
         @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
 
         /* Input Area */
-        .input-container { padding: 14px 20px 28px 20px; background: white; border-top: 1px solid #F0F0F0; display: flex; gap: 10px; align-items: flex-end; flex-shrink: 0; z-index: 10; width: 100%; }
-        .input-box { flex: 1; background: #F4F6F8; border: 1px solid #E2E8F0; border-radius: 24px; padding: 14px 20px; font-size: 16px; outline: none; transition: all 0.2s; }
+        .input-container { padding: 14px 20px 24px; background: white; border-top: 1px solid #F0F0F0; display: flex; gap: 10px; align-items: flex-end; }
+        .input-box { flex: 1; background: #F4F6F8; border: 1px solid #E2E8F0; border-radius: 24px; padding: 14px 20px; font-size: 15px; outline: none; transition: all 0.2s; }
         .input-box:focus { border-color: var(--aha-primary); background: white; box-shadow: 0 0 0 3px rgba(255, 106, 0, 0.1); }
         .send-btn { background: var(--aha-primary); color: white; border: none; width: 48px; height: 48px; border-radius: 24px; cursor: pointer; display: flex; justify-content: center; align-items: center; transition: transform 0.1s; flex-shrink: 0; }
         .send-btn:active { transform: scale(0.95); }
@@ -127,9 +107,9 @@
             <div class="badge">LLM Engineer Portfolio</div>
         </header>
 
-        <!-- 紐⑥쓽 CGM(?곗냽?덈떦痢≪젙湲? 諛?????곗씠????쒕낫??-->
+        <!-- 모의 CGM(연속혈당측정기) 및 대사 데이터 대시보드 -->
         <div class="dashboard">
-            <div class="dash-title">?뱤 Current Metabolism State</div>
+            <div class="dash-title">Current Metabolism State</div>
             <div class="dash-grid">
                 <div class="dash-item">
                     <div class="label">Current BSL</div>
@@ -150,18 +130,18 @@
             <div class="message-wrapper bot">
                 <div class="bot-profile">
                     <div class="avatar">W</div>
-                    <div class="name">AHA ?쒖뒪??/div>
+                    <div class="name">AHA 시스템</div>
                 </div>
                 <div class="bubble">
-                    ?덈뀞?섏꽭?? AHA LLM ?뚯씠?꾨씪???뚯뒪???섍꼍?낅땲??<br>
-                    ?ъ슜?먯쓽 ?꾩옱 ?덈떦(105mg/dL)怨??쒕룞???곗씠?곕? 湲곕컲?쇰줈, 吏湲???랬???앸떒???낅젰?섏떆硫?<b>1) ???諛섏쓳 ?덉륫</b>怨?<b>2) ?됰룞 援먯젙 肄붿묶</b>???쒖감?곸쑝濡??섑뻾?⑸땲??<br><br>
-                    (?? "移섏쫰踰꾧굅 ?명듃瑜?癒뱀쑝?ㅺ퀬 ??)
+                    안녕하세요. AHA LLM 파이프라인 테스트 환경입니다.<br>
+                    사용자의 현재 혈당(105mg/dL)과 활동량 데이터를 기반으로, 지금 섭취할 식단을 입력하시면 <b>1) 대사 반응 예측</b>과 <b>2) 행동 교정 코칭</b>을 순차적으로 수행합니다.<br><br>
+                    (예: "치즈버거 세트를 먹으려고 해")
                 </div>
             </div>
         </div>
 
         <div class="input-container">
-            <input type="text" id="input-box" class="input-box" placeholder="?앸떒 ?낅젰?섏뿬 ?뚯씠?꾨씪???몃━嫄?.." onkeypress="handleKeyPress(event)">
+            <input type="text" id="input-box" class="input-box" placeholder="식단 입력하여 파이프라인 트리거..." onkeypress="handleKeyPress(event)">
             <button id="send-btn" class="send-btn" onclick="sendMessage()">
                 <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path></svg>
             </button>
@@ -185,15 +165,15 @@
             const sendBtn = document.getElementById('send-btn');
             const chatContainer = document.getElementById('chat-container');
             const message = input.value.trim();
-            
-            if(!message) return;
 
-            // ?좎? ?낅젰 泥섎━
+            if (!message) return;
+
+            // 유저 입력 처리
             input.value = '';
             input.disabled = true;
             sendBtn.disabled = true;
 
-            // 1. ?좎? 留먰뭾???뚮뜑留?
+            // 1. 유저 말풍선 렌더링
             const userMsgHtml = `
                 <div class="message-wrapper user">
                     <div class="bubble">${message}</div>
@@ -202,13 +182,12 @@
             chatContainer.insertAdjacentHTML('beforeend', userMsgHtml);
             scrollToBottom();
 
-            // 2. LLM 異붾줎 怨쇱젙 (Pipeline) UI ?앹꽦
+            // 2. LLM 추론 과정 (Pipeline) UI 생성
             const pipelineId = 'pipeline-' + Date.now();
-            const bslSimulate = Math.floor(Math.random() * (180 - 140) + 140); // 140~180 紐⑥쓽 寃곌낵
             const pipelineHtml = `
                 <div class="message-wrapper bot" id="wrapper-${pipelineId}">
                     <div class="bot-profile">
-                        <div class="avatar" style="background:#1E1E1E;">?숋툘</div>
+                        <div class="avatar" style="background:#1E1E1E;">⚙</div>
                         <div class="name">LLM Orchestrator</div>
                     </div>
                     <div class="llm-pipeline" id="${pipelineId}">
@@ -217,12 +196,12 @@
                             <span style="color:#FF6A00;">Processing</span>
                         </div>
                         <div id="step1-${pipelineId}" class="step active">
-                            <div class="step-text">Stage 1: ?꾩긽 ?곗씠??異붾줎 紐⑤뜽 遺꾩꽍 以?.. (?앸떒+?덈떦+?쒕룞)</div>
+                            <div class="step-text">Stage 1: 임상 데이터 추론 모델 분석 중... (식단+혈당+활동)</div>
                             <div class="progress-container" id="prog-cont-1-${pipelineId}"><div class="progress-bar" id="prog-bar-1-${pipelineId}"></div></div>
                             <div class="progress-status" id="prog-stat-1-${pipelineId}">0.0s</div>
                         </div>
                         <div id="step2-${pipelineId}" class="step" style="display:none;">
-                            <div class="step-text">Stage 2: ?됰룞 援먯젙 肄붿묶 ?붿쭊 ?앹꽦 以?..</div>
+                            <div class="step-text">Stage 2: 행동 교정 코칭 엔진 생성 중...</div>
                             <div class="progress-container" id="prog-cont-2-${pipelineId}"><div class="progress-bar" id="prog-bar-2-${pipelineId}"></div></div>
                             <div class="progress-status" id="prog-stat-2-${pipelineId}">0.0s</div>
                         </div>
@@ -232,7 +211,7 @@
                 <div class="message-wrapper bot" id="typing-${pipelineId}">
                     <div class="bot-profile">
                         <div class="avatar">W</div>
-                        <div class="name">AHA 肄붿튂</div>
+                        <div class="name">AHA 코치</div>
                     </div>
                     <div class="bubble">
                         <div class="typing-indicator"><span></span><span></span><span></span></div>
@@ -241,97 +220,97 @@
             `;
             chatContainer.insertAdjacentHTML('beforeend', pipelineHtml);
             scrollToBottom();
-            
+
             // Progress Bar Animation Logic
             const progCont1 = document.getElementById(`prog-cont-1-${pipelineId}`);
             const progBar1 = document.getElementById(`prog-bar-1-${pipelineId}`);
             const progStat1 = document.getElementById(`prog-stat-1-${pipelineId}`);
-            
+
             progCont1.style.display = 'block';
             progStat1.style.display = 'block';
-            
+
             let startTime1 = Date.now();
             let timer1 = setInterval(() => {
                 let elapsed = (Date.now() - startTime1) / 1000;
                 progStat1.innerText = elapsed.toFixed(1) + 's';
-                
-                // ?쒓컙??吏?좎닔濡?利앷? ?띾룄瑜??쒖꽌????떠, 硫덉텛吏 ?딄퀬 98%源뚯? 臾댄븳 ?먭렐(Asymptotic)?섎뒗 怨듭떇
-                // ?섏튂 8.0??議곗젅?섎㈃ 珥덈컲 利앷? ?띾룄媛 ?щ씪吏?
-                let pct = 98 * (1 - Math.exp(-elapsed / 8.0)); 
+
+                // 시간이 지날수록 증가 속도를 서서히 늦춰, 멈추지 않고 98%까지 무한 점근(Asymptotic)하는 공식
+                // 수치 8.0을 조절하면 초반 증가 속도가 달라집니다.
+                let pct = 98 * (1 - Math.exp(-elapsed / 8.0));
                 progBar1.style.width = pct + '%';
             }, 100);
 
             try {
-                // API ?몄텧 - ?꾩옱 ??쒕낫???곹깭瑜?而⑦뀓?ㅽ듃濡??④퍡 ?꾩넚
-                const contextStr = "[?꾩옱?곹깭] ?덈떦: 105mg/dL, 留덉?留??앹궗: 3?쒓컙 ?? ?쒕룞?? 2100嫄몄쓬(??쓬) | [?낅젰?앸떒] " + message;
+                // API 호출 - 현재 대시보드 상태를 컨텍스트로 함께 전송
+                const contextStr = "[현재상태] 혈당: 105mg/dL, 마지막 식사: 3시간 전, 활동량: 2100걸음(낮음) | [입력식단] " + message;
                 const payload = { message: contextStr, history: chatHistory };
-                
+
                 const response = await fetch('/api/chat', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
-                
+
                 const data = await response.json();
 
                 if (!response.ok) {
                     throw new Error(data.detail || "Server Error");
                 }
 
-                // 留덊겕?ㅼ슫 蹂쇰뱶泥?**?띿뒪??*)瑜?HTML <b>?쒓렇濡??뚯떛?섎뒗 ?⑥닔
+                // 마크다운 볼드체(**텍스트**)를 HTML <b>태그로 파싱하는 함수
                 const parseMarkdown = (text) => {
                     return text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>');
                 };
 
-                // 3. UI ?좊땲硫붿씠???④낵 (LLM ?꾨줈?몄떛 ?쒕??덉씠??
+                // 3. UI 애니메이션 효과 (LLM 프로세싱 시뮬레이션)
                 const step1 = document.getElementById(`step1-${pipelineId}`);
                 const step2 = document.getElementById(`step2-${pipelineId}`);
                 const resultLog = document.getElementById(`result-${pipelineId}`);
                 const typing = document.getElementById(`typing-${pipelineId}`);
-                
-                // Stage 1 ?꾨즺
+
+                // Stage 1 완료
                 clearInterval(timer1);
                 progBar1.style.width = '100%';
                 step1.classList.remove('active');
                 step1.classList.add('done');
-                step1.querySelector('.step-text').innerText = 'Stage 1: ???諛섏쓳 諛??덈떦 ?ㅽ뙆?댄겕 ?덉륫 ?꾨즺';
-                
-                // Stage 2 ?쒖옉 諛??꾨즺 泥섎━
+                step1.querySelector('.step-text').innerText = 'Stage 1: 대사 반응 및 혈당 스파이크 예측 완료';
+
+                // Stage 2 시작 및 완료 처리
                 setTimeout(() => {
                     step2.style.display = 'flex';
-                    
+
                     const progCont2 = document.getElementById(`prog-cont-2-${pipelineId}`);
                     const progBar2 = document.getElementById(`prog-bar-2-${pipelineId}`);
                     const progStat2 = document.getElementById(`prog-stat-2-${pipelineId}`);
-                    
+
                     progCont2.style.display = 'block';
                     progStat2.style.display = 'block';
-                    
+
                     let startTime2 = Date.now();
                     let timer2 = setInterval(() => {
                         let elapsed = (Date.now() - startTime2) / 1000;
                         progStat2.innerText = elapsed.toFixed(1) + 's';
-                        
-                        // Stage 2 ??떆 硫덉텛吏 ?딄퀬 98%源뚯? 泥쒖쿇??李⑥삤瑜대뒗 ?먭렐??怨듭떇 ?곸슜
-                        let pct = 98 * (1 - Math.exp(-elapsed / 5.0)); 
+
+                        // Stage 2 역시 멈추지 않고 98%까지 천천히 차오르는 점근적 공식 적용
+                        let pct = 98 * (1 - Math.exp(-elapsed / 5.0));
                         progBar2.style.width = pct + '%';
                     }, 100);
 
-                    // ?쒕??덉씠?섏슜 吏????理쒖쥌 ?뚮뜑留?
+                    // 시뮬레이션용 지연 후 최종 렌더링
                     setTimeout(() => {
                         clearInterval(timer2);
                         progBar2.style.width = '100%';
                         step2.classList.remove('active');
                         step2.classList.add('done');
-                        step2.querySelector('.step-text').innerText = 'Stage 2: ?됰룞 援먯젙 吏移?蹂???꾨즺';
-                        
-                        // 遺꾩꽍 濡쒓렇 ?뚮뜑留?
+                        step2.querySelector('.step-text').innerText = 'Stage 2: 행동 교정 지침 변환 완료';
+
+                        // 분석 로그 렌더링
                         resultLog.style.display = 'block';
                         resultLog.innerHTML = `[Reasoning Engine Output]<br>${data.analysis_log}`;
-                        
+
                         scrollToBottom();
-                        
-                        // 理쒖쥌 肄붿묶 ?듬? ?뚮뜑留?
+
+                        // 최종 코칭 답변 렌더링
                         setTimeout(() => {
                             typing.remove();
                             const parsedAnswer = parseMarkdown(data.answer);
@@ -339,31 +318,31 @@
                                 <div class="message-wrapper bot">
                                     <div class="bot-profile">
                                         <div class="avatar">W</div>
-                                        <div class="name">AHA 肄붿튂</div>
+                                        <div class="name">AHA 코치</div>
                                     </div>
                                     <div class="bubble">${parsedAnswer}</div>
                                 </div>
                             `;
                             chatContainer.insertAdjacentHTML('beforeend', finalHtml);
                             scrollToBottom();
-                            
-                            // 硫붾え由??낅뜲?댄듃
+
+                            // 메모리 업데이트
                             chatHistory.push({ role: "user", content: message });
                             chatHistory.push({ role: "assistant", content: parsedAnswer });
-                            
+
                             input.disabled = false;
                             sendBtn.disabled = false;
                             input.focus();
                         }, 500);
                     }, 1500);
 
-                }, 400); // ?쒕젅?대줈 ?먯씠?꾪듃 泥섎━ ?쒓컖???곗텧
+                }, 400); // 딜레이로 에이전트 처리 시각적 연출
 
             } catch (error) {
                 document.getElementById(`typing-${pipelineId}`)?.remove();
                 chatContainer.insertAdjacentHTML('beforeend', `
                     <div class="message-wrapper bot">
-                        <div class="bubble" style="color:red; font-size:12px; font-family:monospace;">?먮윭 諛쒖깮: ${error.message}</div>
+                        <div class="bubble" style="color:red; font-size:12px; font-family:monospace;">에러 발생: ${error.message}</div>
                     </div>
                 `);
                 input.disabled = false;
