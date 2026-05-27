@@ -85,7 +85,7 @@ async def chat_endpoint(request: ChatRequest):
         final_coach_answer = response_stage2.text
 
         # UI에 분석 로그와 최종 답변을 분리해서 전달
-        # JSON 포맷을 예쁘게 보여주기 위해 코드블록 기호를 제거합니다
+        # JSON 포맷을 예쁘게 보여주기 위해 코드블록 기호 제거
         clean_log = analysis_result.replace("```json", "").replace("```", "").strip()
         
         return {
